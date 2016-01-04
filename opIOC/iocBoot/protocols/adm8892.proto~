@@ -1,0 +1,16 @@
+# protocol file for LCC
+
+#OutTerminator = CR;       # but no LF on outputs
+#InTerminator = LF CR;
+#ExtraInput = Error;     
+
+#ReplyTimeout = 10000; # DEBUG 10 sec - to begin to type response by hand!
+ReplyTimeout = 500; # DEBUG  5 sec - to begin to type response by hand! but a bit faster
+ReadTimeout  =  500; # DEBUG  5 sec - between characters 
+
+# 'in' is the entire expected banner string
+# so any other string will raise @mismatch exception
+read {
+  out CR LF "P8892 01456 6A}";     # sends read command to the ADM-606M
+ in CR LF " P8892 01456 %(Shop:RadMon:Comm:Stat1)1X%(Shop:RadMon:Comm:Stat2)1X%(Shop:RadMon:Comm:Stat3)1X%(Shop:RadMon:Comm:Stat4)1X%(Shop:RadMon:Comm:Stat5)1X%(Shop:RadMon:Comm:Stat6)1X%(Shop:RadMon:Comm:Stat7)1X%(Shop:RadMon:Comm:Stat8)1X%(Shop:RadMon:Comm:Stat9)1X%(Shop:RadMon:Comm:Stat10)1X %(Shop:RadMon:Comm:Stat11)3i%(Shop:RadMon:Comm:Stat:String1)1s%(Shop:RadMon:Comm:Stat12)1i %(Shop:RadMon:Comm:Stat13)3i%(Shop:RadMon:Comm:Stat:String2)1s%(Shop:RadMon:Comm:Stat14)1i %(Shop:RadMon:Comm:Stat15)3i%(Shop:RadMon:Comm:Stat:String3)1s%(Shop:RadMon:Comm:Stat16)1i %(Shop:RadMon:Comm:Stat17)3i%(Shop:RadMon:Comm:Stat:String4)1s%(Shop:RadMon:Comm:Stat18)1i %(*)2H}"
+}

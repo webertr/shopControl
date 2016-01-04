@@ -1,0 +1,19 @@
+# protocol file for LCC
+
+#OutTerminator = CR;       # but no LF on outputs
+#InTerminator = LF CR;
+#ExtraInput = Error;     
+
+#ReplyTimeout = 10000; # DEBUG 10 sec - to begin to type response by hand!
+ReplyTimeout = 500; # DEBUG  5 sec - to begin to type response by hand! but a bit faster
+ReadTimeout  =  500; # DEBUG  5 sec - between characters 
+
+# 'in' is the entire expected banner string
+# so any other string will raise @mismatch exception
+readCNi853Water {
+  out "*03X01\r";     # sends read command to the ADM-606M
+  in "03X01%(Shop:Cooling:PID:String1)1i%(Shop:Cooling:PID:String2)1i%(Shop:Cooling:PID:String3)1i.%(Shop:Cooling:PID:String5)1i\r\n"
+}
+#PID Address is 03
+##Typicall command to get the process input is  "*03X01\r"
+##Typical Output is "03X01026.3\r\n"

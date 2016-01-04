@@ -1,0 +1,100 @@
+# protocol file for LCC
+
+#OutTerminator = CR;       # but no LF on outputs
+#InTerminator = LF CR;
+#ExtraInput = Error;     
+
+#ReplyTimeout = 10000; # DEBUG 10 sec - to begin to type response by hand!
+ReplyTimeout = 500; # DEBUG  5 sec - to begin to type response by hand! but a bit faster
+ReadTimeout  =  500; # DEBUG  5 sec - between characters 
+
+# 'in' is the entire expected banner string
+# so any other string will raise @mismatch exception
+read8892Vault {
+  out CR LF "P8892 01456 6A}";     # sends read command to the ADM-606M
+ in CR LF " P8892 01456 %(Shop:Rad:Vault:Stat1)1X%(Shop:Rad:Vault:Stat2)1X%(Shop:Rad:Vault:Stat3)1X%(Shop:Rad:Vault:Stat4)1X%(Shop:Rad:Vault:Stat5)1X%(Shop:Rad:Vault:Stat6)1X%(Shop:Rad:Vault:Stat7)1X%(Shop:Rad:Vault:Stat8)1X%(Shop:Rad:Vault:Stat9)1X%(Shop:Rad:Vault:Stat10)1X %(Shop:Rad:Vault:Stat11)3i%(Shop:Rad:Vault:Stat:String1)1s%(Shop:Rad:Vault:Stat12)1i %(Shop:Rad:Vault:Stat13)3i%(Shop:Rad:Vault:Stat:String2)1s%(Shop:Rad:Vault:Stat14)1i %(Shop:Rad:Vault:Stat15)3i%(Shop:Rad:Vault:Stat:String3)1s%(Shop:Rad:Vault:Stat16)1i %(Shop:Rad:Vault:Stat17)3i%(Shop:Rad:Vault:Stat:String4)1s%(Shop:Rad:Vault:Stat18)1i %(*)2X}"
+}
+read0001Iso {
+  out CR LF "P0001 01456 60}";     # sends read command to the ADM-606M
+ in CR LF " P1 01456 %(Shop:Rad:Iso:Stat1)1X%(Shop:Rad:Iso:Stat2)1X%(Shop:Rad:Iso:Stat3)1X%(Shop:Rad:Iso:Stat4)1X%(Shop:Rad:Iso:Stat5)1X%(Shop:Rad:Iso:Stat6)1X%(Shop:Rad:Iso:Stat7)1X%(Shop:Rad:Iso:Stat8)1X%(Shop:Rad:Iso:Stat9)1X%(Shop:Rad:Iso:Stat10)1X %(Shop:Rad:Iso:Stat11)3i%(Shop:Rad:Iso:Stat:String1)1s%(Shop:Rad:Iso:Stat12)1i %(Shop:Rad:Iso:Stat13)3i%(Shop:Rad:Iso:Stat:String2)1s%(Shop:Rad:Iso:Stat14)1i %(Shop:Rad:Iso:Stat15)3i%(Shop:Rad:Iso:Stat:String3)1s%(Shop:Rad:Iso:Stat16)1i %(Shop:Rad:Iso:Stat17)3i%(Shop:Rad:Iso:Stat:String4)1s%(Shop:Rad:Iso:Stat18)1i %(*)2X}"
+}
+#%(PV)1X  means read 1 capital Hex
+#%(PV)1s  means read 1 string
+#%(PV)3i  means a 3 digit integer
+#Here is a sample of what is sent and returned.
+#Sent:		'[CR][LF]P8892 01456 6A}'
+#Returned:	'P8892 01456 2100000000 947+1 224+8 100+4 100+9 63}'
+#
+#2100000000: Status Bits (ADM-616, New Data Read, No Alarms, Keypad Enable, No Count Failure) 
+#
+#947+1: 9.47 E1 mR/h, Probe 1 Dose Rate
+#
+#224+8: 2.24 E8 mR, Probe 1 Dose
+#
+#100+4: 1.00 E4 mR/h, Probe 1 Dose High Alarm
+#
+#100+9: 1.00 E9 mR/h, Probe 2 Alert High Alarm
+#
+#Status Bits (each byte is represented by a single ascii character that is the hex value:
+#
+#Byte 1: Model ID. 
+#Bit 0:	0 = ADM-600 Series Local; 1 = ADM-600 Series Remote; 
+#Bit 1:	2= ADM-606 Series
+#
+#Byte 2: Status Bits.
+#Bit 0:	1 = New Data Ready
+#Bit 1:	2 = Alarm Set Points Modified
+#
+#Byte 3: Channel 1 Alarms.
+#Bit 0:	1 = Channel 1 High
+#Bit 1:	2 = Channel 1 Alert
+#Bit 2:	4 = Channel 1 Dose
+#Bit 3:	8 = Channel 1 Rate of Rise
+#
+#Byte 4: Channel 2 Alarms.
+#Bit 0:	1 = Channel 2 High
+#Bit 1:	2 = Channel 2 Alert
+#Bit 2:	4 = Channel 2 Dose
+#Bit 3:	8 = Channel 2 Rate of Rise
+#
+#Byte 5: Channel 3 Alarms.
+#Bit 0:	1 = Channel 3 High
+#Bit 1:	2 = Channel 3 Alert
+#Bit 2:	4 = Channel 3 Dose
+#Bit 3:	8 = Channel 3 Rate of Rise
+#
+#Byte 6: Channel 1X2 Alarms.
+#Bit 0:	1 = Channel 3 High
+#Bit 1:	2 = Channel 3 Alert
+#Bit 2:	4 = Channel 3 Dose
+#Bit 3:	8 = Channel 3 Rate of Rise
+#
+#Byte 7: Sample Flow & Stack Flow.
+#Bit 0:	1 = Low Sample Flow
+#Bit 1:	2 = High Sample Flow
+#Bit 2:	4 = Low Stack Flow
+#Bit 3:	8 = High Stack Flow
+#
+#Byte 8: Vacuum Alarms. 
+#Bit 0:	1 = Low Vacuum
+#Bit 1:	2 = High Vacuum
+#
+#Byte 9: ADM-616 Failure Code.
+#Bit 0:	1 = Hardware Failure
+#Bit 1:	2 = No Count Failure
+#Bit 2:	4 = Check Source Alarm
+#
+#Byte 10: ADM-616 Hardware Status.
+#Bit 0:	1 = AC Power Failure
+#Bit 1:	2 = Key Switch Enabled
+#Bit 2:	4 = Check Source Mode
+#Bit 3:	8 = Calibrate Mode
+#Bit 4:	10 = Test 1 Mode
+#Bit 4 + Bit 2:	14 = Test 2 Mode
+#Bit 4 + Bit 3:	18 = Test Exit Mode	
+#
+#Byte 11: Remote ADM-600 Failure Code
+#Bit 3 + Bit 1:	10 = Detector Link Failure	
+#
+#Byte 12: Remote ADM-600 Hardware Status
+#Bit 1:	2 = Key Switch Enabled
